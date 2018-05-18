@@ -17,14 +17,11 @@ import com.highlion.service.impl.TypeServiceImpl;
 public class FindAllTypesServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-
 	@Override
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		TypeService ts = new TypeServiceImpl();
 		List<TypeVO> list = ts.findAllTypes();
-		// 页面显示javascript类型
 		response.setContentType("text/javascript;charset=utf-8");
 		String js = "var types= [";
 		for (int i = 0; i < list.size(); i++) {
