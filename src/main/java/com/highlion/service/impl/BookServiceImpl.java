@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.highlion.dao.BookDaoJdbc;
+import com.highlion.dao.TypeDaoJdbc;
 import com.highlion.dao.impl.BookDaoJdbcImpl;
+import com.highlion.dao.impl.TypeDaoJdbcImpl;
 import com.highlion.domain.BookVO;
+import com.highlion.domain.TypeVO;
 import com.highlion.service.BookService;
 
 public class BookServiceImpl implements BookService {
@@ -17,21 +20,33 @@ public class BookServiceImpl implements BookService {
 	}
    
 	@Override
-	public List<BookVO> findAllBooks(int pageNo) {
+	public List<BookVO> findAllBooks(int pageNo,int tid,String name) {
 		
-		return bad.findAllBooks(pageNo);
+		return bad.findAllBooks(pageNo,tid,name);
 	}
 	
 	@Override
-	public int findTotal() {
+	public int findTotal(int tid,String name) {
 		
-		return bad.findTotal();
+		return bad.findTotal(tid,name);
 	}
 
 	@Override
 	public Map<Integer, String> getTransforType() {
 		// TODO Auto-generated method stub
 		return bad.getTransforType();
+	}
+
+	@Override
+	public List<TypeVO> findAllTypes() {
+		TypeDaoJdbc tdj=new TypeDaoJdbcImpl();
+		return tdj.findAllTypes();
+	}
+
+	@Override
+	public int delById(int id) {
+		
+		return bad.delById(id);
 	}
 
 	

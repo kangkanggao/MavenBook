@@ -1,3 +1,4 @@
+<%@page import="com.highlion.domain.TypeVO"%>
 <%@page import="java.util.Map"%>
 <%@page import="com.highlion.domain.BookVO"%>
 <%@page import="java.util.List"%>
@@ -48,6 +49,42 @@
 
 				<table class="table table-hover table-condensed   table-bordered">
 					<thead>
+					    <tr>
+							<td colspan="9">
+
+								<form class="form-inline" action="bookList" id="searchFrm">
+									<div class="form-group">
+										<label for="inputName">书名</label> <input type="text" class="form-control" id="inputName" name="name"
+											value='<%=request.getAttribute("name") == null ? "" : request.getAttribute("name")%>'>
+									</div>
+									<div class="form-group">
+										<label for="selTid">类型</label> <select name="tid" id="selTid" class="form-control">
+											<option value="-1">--请选择--</option>
+											<%
+												@SuppressWarnings("unchecked")
+												List<TypeVO> ls02 = (List<TypeVO>) request.getAttribute("types");
+												int tid = (Integer) request.getAttribute("tid");
+												for (TypeVO typeVo : ls02) {
+													if (tid == typeVo.getid()) {
+											%>
+											<option value="<%=typeVo.getid()%>" selected="selected"><%=typeVo.getName()%></option>
+											<%
+												} else {
+											%>
+											<option value="<%=typeVo.getid()%>"><%=typeVo.getName()%></option>
+											<%
+												}
+												}
+											%>
+										</select>
+
+
+									</div>
+									<button type="submit" class="btn btn-default">搜索</button>
+								</form>
+
+							</td>
+						</tr>
 						<tr>
 							<th>序号</th>
 							<th>书名</th>
@@ -57,6 +94,7 @@
 							<th>价格</th>
 							<th>作者</th>
 							<th>日期</th>
+							<th>操作</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -71,15 +109,18 @@
 							<td><%=bookVO.getDescrible()%></td>
 							<td><%=map.get(bookVO.getTid())%></td>
 							<td><img alt="" src="upload/<%=bookVO.getPhoto()%>"></td>
+							
 							<td><%=bookVO.getPrice()%></td>
 							<td><%=bookVO.getAuthor()%></td>
 							<td><%=bookVO.getPubDate()%></td>
+							<td><a href="bookDel?id=<%=bookVO.getId()%>" class="glyphicon glyphicon-remove" title="删除" onclick="confrimDel(event)"></a> &nbsp;&nbsp;&nbsp;&nbsp; 
+							<a href="toBookEdit?id=<%=bookVO.getId()%>" class="glyphicon glyphicon-pencil" title="修改"></a></td>
 						</tr>
 						<%
 							}
 						%>
 						<tr>
-							<td colspan="8" style="padding-top: 0px; padding-bottom: 0px;" class="text-center">
+							<td colspan="10" style="padding-top: 0px; padding-bottom: 0px;" class="text-center">
 
 								<ul class="pagination" style="margin: 0px;">
 								  <% 
@@ -170,6 +211,10 @@
 	<script type="text/javascript">
       $(function(){
               $("a[ href='bookList?pageNo=<%=pageNo%>']").parent("li").addClass("active");
+              $(".pagination a[href^='bookList?pageNo=']").click(function() {
+            	//修改链接，追加name和tid//用序列化表单
+  				this.href += "&" + $("#searchFrm").serialize();
+  			});
           });
 	</script>
 </body>

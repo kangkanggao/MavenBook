@@ -43,7 +43,7 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 	}
 
 	@Override
-	public List<BookVO> findAllBooks(int pageNo) {
+	public List<BookVO> findAllBooks(int pageNo,int tid,String name) {
 		Connection conn = null;
 		Connection conn2 = null;
 		PreparedStatement ps = null;
@@ -53,8 +53,16 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 		try {
 			conn = Utils.getConn();
 			conn2=Utils.getConn();
-			ps = conn.prepareStatement("select * from t_book limit " + ((pageNo - 1) * PageConstant.PAGE_SIZE) + ","
-					+ PageConstant.PAGE_SIZE);
+			String sql="select *from t_book where 1=1";
+			if(tid!=-1) {
+				sql+=" and tid="+tid;
+			}
+			if(name!=null&&!name.equals("")) {
+				sql+=" and name like '%"+name+"%' ";
+			}
+			sql+=" limit "+((pageNo-1)*PageConstant.PAGE_SIZE)+","+PageConstant.PAGE_SIZE;
+			System.out.println(sql);
+			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			List<BookVO> list = new ArrayList<BookVO>();
 			map=new HashMap<>();
@@ -88,13 +96,21 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 	}
 
 	@Override
-	public int findTotal() {
+	public int findTotal(int tid,String name) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = Utils.getConn();
-			ps = conn.prepareStatement("select count(*) from t_book");
+			String sql="select count(*) from t_book where 2=2 ";
+			if(tid!=-1) {
+				sql+=" and tid="+tid;
+			}
+			if(name!=null&&!name.equals("")) {
+				sql+=" and name like '%"+name+"%' ";
+			}
+			System.out.println(sql);
+			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getInt(1);
@@ -109,6 +125,26 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 	}
 	public Map<Integer,String> getTransforType(){
 		return map;
+	}
+//É¾³ý
+	@Override
+	public int delById(int id) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn=Utils.getConn();
+			String sql="delete from t_book where id="+id;
+			ps=conn.prepareStatement(sql);
+			int ret=ps.executeUpdate();
+			return ret;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			Utils.release(conn,ps, rs);
+		}
+		return 0;
 	}
 
 }
