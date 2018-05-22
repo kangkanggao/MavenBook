@@ -37,10 +37,10 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li>
-							<a href="#">修改密码</a>
+							<a href="login.jsp">登陆</a>
 						</li>
 					<li>
-							<a href="#">登陆</a>
+							<a href="exit.jsp">退出</a>
 						</li>
 					</ul>
 				</div>

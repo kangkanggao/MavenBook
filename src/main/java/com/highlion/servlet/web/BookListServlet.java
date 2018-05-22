@@ -23,7 +23,6 @@ public class BookListServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		String strPageNo = request.getParameter("pageNo");
-		//获取搜索条件
 		String name=request.getParameter("name");
 		String strTid=request.getParameter("tid");
 		int tid=-1;
@@ -44,7 +43,7 @@ public class BookListServlet extends HttpServlet {
 		Map<Integer,String>map=bs.getTransforType();
 		List<TypeVO> types=bs.findAllTypes();
 		int total = bs.findTotal(tid,name);
-		System.out.println("总页数:"+total);
+	
 		if (total % PageConstant.PAGE_SIZE == 0) {
 			request.setAttribute("totalPage", total / PageConstant.PAGE_SIZE);
 		} else {

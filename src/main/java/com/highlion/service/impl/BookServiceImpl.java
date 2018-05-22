@@ -49,6 +49,18 @@ public class BookServiceImpl implements BookService {
 		return bad.delById(id);
 	}
 
+	@Override
+	public BookVO findAllBookById(int id) {
+		// TODO Auto-generated method stub
+		return bad.findAllBookById(id);
+	}
+
+	@Override
+	public int doBookEdit(BookVO book) {
+
+		return bad.doBookEdit(book);
+	}
+
 	
 	
 

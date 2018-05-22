@@ -25,6 +25,7 @@ public class LoginUserServlet extends HttpServlet {
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
         User user=new User();
 		try {
 			BeanUtils.populate(user, request.getParameterMap());
@@ -33,24 +34,25 @@ public class LoginUserServlet extends HttpServlet {
 		} catch (InvocationTargetException e1) {
 			e1.printStackTrace();
 		}
-		//判断验证码
+		//鍒ゆ柇楠岃瘉鐮�
 		String vcode = request.getParameter("vcode");
 		HttpSession session = request.getSession();
 		String serverVcode = (String) session.getAttribute("validateCode");
 		if (!serverVcode.equalsIgnoreCase(vcode)) {
-			request.setAttribute("msg", "验证码错误");
+			request.setAttribute("msg", "楠岃瘉鐮侀敊璇�");
 			request.setAttribute("name", user.getName());
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 			return;
 		}
-		//判断是否登录成功
+		//鍒ゆ柇鏄惁鐧诲綍鎴愬姛
 		UserLogin us=new UserLoginImpl();
 		Boolean ret=us.login(user);
 		if (ret) {
+			request.getSession().setAttribute("loginSuccess","1");
 			request.setAttribute("name", user.getName());
 			request.getRequestDispatcher("main.jsp").forward(request, response);
 		} else {
-			request.setAttribute("msg", "用户名或密码错误");
+			request.setAttribute("msg", "鐢ㄦ埛鍚嶆垨瀵嗙爜閿欒");
 			request.setAttribute("name", user.getName());
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}

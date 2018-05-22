@@ -14,4 +14,6 @@ public interface BookService {
 	public Map<Integer,String> getTransforType();
 	List<TypeVO> findAllTypes();
 	int delById(int id);
+	BookVO findAllBookById(int id);
+	int doBookEdit(BookVO book);
 }

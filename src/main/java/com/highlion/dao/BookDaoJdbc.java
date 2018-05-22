@@ -11,4 +11,6 @@ List<BookVO> findAllBooks(int pageNo, int tid, String name);
 public int findTotal(int tid, String name) ;
 public Map<Integer,String> getTransforType();
 int delById(int id);
+BookVO findAllBookById(int id);
+int doBookEdit(BookVO book);
 }

@@ -15,14 +15,15 @@ import com.highlion.utils.PageConstant;
 import com.highlion.utils.Utils;
 
 public class BookDaoJdbcImpl implements BookDaoJdbc {
-	Map <Integer,String>map=null;
+	Map<Integer, String> map = null;
+
 	@Override
 	public int add(BookVO bookVo) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = Utils.getConn();
-			String sql = "insert into t_book(tid,name,descri,photo,price,author,pubDate) values(?,?,?,?,?,?,?)";
+			String sql = "insert into t_book(tid,name,describle,photo,price,author,pubDate) values(?,?,?,?,?,?,?)";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, bookVo.getTid());
 			ps.setString(2, bookVo.getName());
@@ -43,7 +44,7 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 	}
 
 	@Override
-	public List<BookVO> findAllBooks(int pageNo,int tid,String name) {
+	public List<BookVO> findAllBooks(int pageNo, int tid, String name) {
 		Connection conn = null;
 		Connection conn2 = null;
 		PreparedStatement ps = null;
@@ -52,30 +53,30 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 		ResultSet rs2 = null;
 		try {
 			conn = Utils.getConn();
-			conn2=Utils.getConn();
-			String sql="select *from t_book where 1=1";
-			if(tid!=-1) {
-				sql+=" and tid="+tid;
+			conn2 = Utils.getConn();
+			String sql = "select *from t_book where 1=1";
+			if (tid != -1) {
+				sql += " and tid=" + tid;
 			}
-			if(name!=null&&!name.equals("")) {
-				sql+=" and name like '%"+name+"%' ";
+			if (name != null && !name.equals("")) {
+				sql += " and name like '%" + name + "%' ";
 			}
-			sql+=" limit "+((pageNo-1)*PageConstant.PAGE_SIZE)+","+PageConstant.PAGE_SIZE;
+			sql += " limit " + ((pageNo - 1) * PageConstant.PAGE_SIZE) + "," + PageConstant.PAGE_SIZE;
 			System.out.println(sql);
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			List<BookVO> list = new ArrayList<BookVO>();
-			map=new HashMap<>();
+			map = new HashMap<>();
 			while (rs.next()) {
 				BookVO bookVO = new BookVO();
 				bookVO.setId(rs.getInt("id"));
 				bookVO.setTid(rs.getInt("tid"));
-				//把书的类型代号转换为实际类型
-				ps2=conn2.prepareStatement("select name from t_type where id="+rs.getInt("tid")+"");
-				rs2=ps2.executeQuery();
-				if(rs2.next()) {
-					String tname=rs2.getString("name");
-					map.put(rs.getInt("tid"),tname);
+				// 把书的类型代号转换为实际类型
+				ps2 = conn2.prepareStatement("select name from t_type where id=" + rs.getInt("tid") + "");
+				rs2 = ps2.executeQuery();
+				if (rs2.next()) {
+					String tname = rs2.getString("name");
+					map.put(rs.getInt("tid"), tname);
 				}
 				bookVO.setName(rs.getString("name"));
 				bookVO.setDescrible(rs.getString("describle"));
@@ -96,18 +97,18 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 	}
 
 	@Override
-	public int findTotal(int tid,String name) {
+	public int findTotal(int tid, String name) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = Utils.getConn();
-			String sql="select count(*) from t_book where 2=2 ";
-			if(tid!=-1) {
-				sql+=" and tid="+tid;
+			String sql = "select count(*) from t_book where 2=2 ";
+			if (tid != -1) {
+				sql += " and tid=" + tid;
 			}
-			if(name!=null&&!name.equals("")) {
-				sql+=" and name like '%"+name+"%' ";
+			if (name != null && !name.equals("")) {
+				sql += " and name like '%" + name + "%' ";
 			}
 			System.out.println(sql);
 			ps = conn.prepareStatement(sql);
@@ -123,27 +124,100 @@ public class BookDaoJdbcImpl implements BookDaoJdbc {
 		}
 		return 0;
 	}
-	public Map<Integer,String> getTransforType(){
+
+	public Map<Integer, String> getTransforType() {
 		return map;
 	}
-//删除
+
+	// 删除
 	@Override
 	public int delById(int id) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			conn=Utils.getConn();
-			String sql="delete from t_book where id="+id;
-			ps=conn.prepareStatement(sql);
-			int ret=ps.executeUpdate();
+			conn = Utils.getConn();
+			String sql = "delete from t_book where id=" + id;
+			ps = conn.prepareStatement(sql);
+			int ret = ps.executeUpdate();
 			return ret;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally {
-			Utils.release(conn,ps, rs);
+		} finally {
+			Utils.release(conn, ps, rs);
 		}
+		return 0;
+	}
+
+	@Override
+	public BookVO findAllBookById(int id) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		BookVO bv = new BookVO();
+		try {
+			conn = Utils.getConn();
+			String sql = "select * from t_book where id =" + id;
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				bv.setId(rs.getInt("id"));
+				bv.setTid(rs.getInt("tid"));
+				bv.setName(rs.getString("name"));
+				bv.setDescrible(rs.getString("describle"));
+				bv.setPhoto(rs.getString("photo"));
+				bv.setPubDate(rs.getDate("pubDate"));
+				bv.setAuthor(rs.getString("author"));
+				bv.setPrice(rs.getDouble("price"));
+			}
+			return bv;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			Utils.release(conn, ps);
+		}
+		return null;
+	}
+
+	@Override
+	public int doBookEdit(BookVO book) {
+	Connection conn=null;
+	PreparedStatement ps=null;
+	try {
+		conn=Utils.getConn();
+		if(book.getPhoto()==null||book.getPhoto().equals("")) {
+			String sql =" update  t_book set  tid=?,name=?,describle=?,price=?,author=?,pubDate=? where id=?";
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1,book.getTid());
+			ps.setString(2,book.getName());
+			ps.setString(3,book.getDescrible());
+			ps.setDouble(4,book.getPrice());
+			ps.setString(5,book.getAuthor());
+			ps.setDate(6, new java.sql.Date(book.getPubDate().getTime()));
+			ps.setInt(7,book.getId());
+			int ret=ps.executeUpdate();
+			return ret;
+		}else {
+			String sql =" update  t_book set  tid=?,name=?,describle=?,price=?,author=?,pubDate=?,photo=? where id=?";
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1,book.getTid());
+			ps.setString(2,book.getName());
+			ps.setString(3,book.getDescrible());
+			ps.setDouble(4,book.getPrice());
+			ps.setString(5,book.getAuthor());
+			ps.setDate(6, new java.sql.Date(book.getPubDate().getTime()));
+			ps.setString(7,book.getPhoto());
+			ps.setInt(8,book.getId());
+			int ret=ps.executeUpdate();
+			return ret;
+		}
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}finally {
+	   Utils.release(conn,ps);
+	}
 		return 0;
 	}
 

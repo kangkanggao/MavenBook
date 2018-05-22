@@ -36,8 +36,8 @@
 								</ul></li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
-							<li><a href="#">修改密码</a></li>
 							<li><a href="#">登陆</a></li>
+							<li><a href="exit.jsp">退出</a></li>
 						</ul>
 					</div>
 
@@ -99,7 +99,7 @@
 					</thead>
 					<tbody>
 						<%
-							List<BookVO> ls = (List<BookVO>) request.getAttribute("list");
+							List<BookVO> ls = (List<BookVO>)request.getAttribute("list");
 						    Map<Integer,String>map=(Map<Integer,String>)request.getAttribute("map");
 							for (BookVO bookVO : ls) {
 						%>
@@ -114,6 +114,7 @@
 							<td><%=bookVO.getAuthor()%></td>
 							<td><%=bookVO.getPubDate()%></td>
 							<td><a href="bookDel?id=<%=bookVO.getId()%>" class="glyphicon glyphicon-remove" title="删除" onclick="confrimDel(event)"></a> &nbsp;&nbsp;&nbsp;&nbsp; 
+							
 							<a href="toBookEdit?id=<%=bookVO.getId()%>" class="glyphicon glyphicon-pencil" title="修改"></a></td>
 						</tr>
 						<%
@@ -216,6 +217,12 @@
   				this.href += "&" + $("#searchFrm").serialize();
   			});
           });
+      function confrimDel(event) {
+			if (!confirm("确认删除")) {
+				//取消默认行为就不删除了
+				event.preventDefault();
+			}
+		}
 	</script>
 </body>
 </html>
